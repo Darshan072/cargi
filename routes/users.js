@@ -60,4 +60,8 @@ router.route('/reset/:token')
     .get(users.getToken)
     .post(users.postToken)
 
+    
+router.route('/users/reset')
+.get(users.renderReset)
+
 module.exports = router;
