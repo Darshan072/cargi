@@ -292,7 +292,6 @@ module.exports.renderLogin = (req, res) => {
 
 module.exports.login = (req, res) => {
   req.flash("success", "welcome back!");
-  // localStorage.setItem("usercreds", JSON.stringify(req.body))
   const redirectUrl = req.session.returnTo || "/campgrounds";
   delete req.session.returnTo;
   res.redirect(redirectUrl);
