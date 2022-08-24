@@ -134,8 +134,10 @@ module.exports.carrito = async (req, res) => {
       },
     })
     .populate("author");
+  const product = {};
+  product[id] = { ...req.body, id: id };
 
-  req.session.product[id] = { ...req.body, id: id };
+  req.session.product = { ...product };
 
   const pre_order = new Pre_order();
   const user = await User.findById(req.user.id)
@@ -184,13 +186,22 @@ module.exports.showPost = async (req, res) => {
   const { id } = req.params;
   const post = await Post.findById(id).populate("campground");
   const campground = post.campground;
-  const product = {
-    section: req.session?.product[id]?.section || "",
-    drop_off: req.session?.product[id]?.drop_off || "",
-    seat: req.session?.product[id]?.seat || "",
-    how_many: req.session?.product[id]?.how_many || "",
+  let productData = {
+    section: "",
+    drop_off: "",
+    seat: "",
+    how_many: "",
   };
-  res.render("posts/show", { post, campground, product });
+
+  if (req.session?.hasOwnProperty("product")) {
+    productData = {
+      section: req.session?.product[id]?.section || "",
+      drop_off: req.session?.product[id]?.drop_off || "",
+      seat: req.session?.product[id]?.seat || "",
+      how_many: req.session?.product[id]?.how_many || "",
+    };
+  }
+  res.render("posts/show", { post, campground, product: productData });
 };
 
 module.exports.deletePost = async (req, res) => {
@@ -400,11 +411,20 @@ module.exports.ShowRapid = async (req, res) => {
   const { id } = req.params;
   const post = await Post.findById(id).populate("campground");
   const campground = post.campground;
-  const product = {
-    section: req.session?.product[id]?.section || "",
-    drop_off: req.session?.product[id]?.drop_off || "",
-    seat: req.session?.product[id]?.seat || "",
-    how_many: req.session?.product[id]?.how_many || "",
+
+  let product = {
+    section: "",
+    drop_off: "",
+    seat: "",
+    how_many: "",
   };
+  if (req.session?.hasOwnProperty("product")) {
+    product = {
+      section: req.session?.product[id]?.section || "",
+      drop_off: req.session?.product[id]?.drop_off || "",
+      seat: req.session?.product[id]?.seat || "",
+      how_many: req.session?.product[id]?.how_many || "",
+    };
+  }
   res.render("posts/show_rapid", { post, campground, product });
 };
