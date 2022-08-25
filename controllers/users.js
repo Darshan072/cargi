@@ -431,11 +431,7 @@ module.exports.forgot = async (req, res, next) => {
     user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
 
     var t = await user.save();
-    req.flash(
-      "success",
-      "An e-mail has been sent to " + user.email + " with further instructions."
-    );
-    res.redirect("/forgot");
+
     var smtpTransport = nodemailer.createTransport({
       service: "Gmail",
       auth: {
@@ -465,9 +461,11 @@ module.exports.forgot = async (req, res, next) => {
       "success",
       "An e-mail has been sent to " + user.email + " with further instructions."
     );
+    res.redirect("/forgot");
+
   } catch (error) {
     if (error) return next(error);
-    res.redirect("/login");
+    res.redirect("/forgot");
   }
 };
 
